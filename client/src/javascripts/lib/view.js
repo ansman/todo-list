@@ -15,6 +15,6 @@ define('lib/view', ['backbone'], function(Backbone) {
       };
     },
 
-    onRender: function() {}
+    onRender: function() {},
   });
 });

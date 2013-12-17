@@ -1,62 +1,69 @@
 module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-      build: {
-        src: 'public/javascripts/app.js',
-        dest: 'public/javascripts/app.min.js'
-      }
-    },
+    pkg: grunt.file.readJSON("package.json"),
     stylus: {
       compile: {
         files: {
-          "public/stylesheets/app.css": ["stylus/app.styl"]
+          "public/stylesheets/app.css": ["src/stylus/app.styl"]
         }
       }
     },
     jshint: {
       gruntfile: {
-        src: 'Gruntfile.js'
-      },
-      javascript: {
-        src: 'public/javascripts/app.js',
+        src: "Gruntfile.js",
         options: {
           laxcomma: true
+        }
+      },
+      src: {
+        src: "src/javascripts/**/*.js",
+        options: {
+          laxcomma: true,
+          ignores: [
+            "src/javascripts/text.js",
+          ]
+        }
+      }
+    },
+    requirejs: {
+      development: {
+        options: {
+          useStrict: true,
+          optimize: '',
+          baseUrl: 'src/javascripts',
+          out: 'public/javascripts/app.js',
+          name: 'app',
+          mainConfigFile: './src/config/development.js',
+          stubModules: ["text"]
         }
       }
     },
     watch: {
-      options: { livereload: true },
       stylus: {
-        options: { livereload: false },
-        files: ['stylus/*.styl'],
-        tasks: ['stylus:compile']
+        options: { atBegin: true },
+        files: ["src/stylus/*.styl"],
+        tasks: ["stylus:compile"]
       },
-      css: {
-        files: ['public/**/*.css']
+      livereload: {
+        files: ["public/**/*.css", "public/**/*.js", "public/**/*.html"],
+        options: { livereload: true },
       },
-      javascripts: {
-        files: ['public/javascripts/**/*.js'],
-        tasks: ['jshint']
-      },
-      html: {
-        files: ['public/**/*.html']
+      src: {
+        options: { atBegin: true, },
+        files: ["src/javascripts/**/*.js"],
+        tasks: ["requirejs:development", "jshint:src"]
       }
     }
   });
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-stylus');
-  grunt.loadNpmTasks('grunt-notify');
+  grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks("grunt-contrib-stylus");
+  grunt.loadNpmTasks("grunt-contrib-requirejs");
+  grunt.loadNpmTasks("grunt-notify");
 
-  // Default task(s).
-  grunt.registerTask('default', ['stylus', 'watch']);
-  grunt.registerTask('heroku:production', ['stylus']);
+  grunt.registerTask("default", "watch");
+  grunt.registerTask("heroku:production", ["stylus"]);
 };
