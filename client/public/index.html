@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super Todo</title>
+  <link rel="stylesheet" href="stylesheets/app.css" type="text/css">
+  <script src="javascripts/require.js"></script>
+  <script src="http://localhost:35729/livereload.js"></script>
+</head>
+<body>
+  <script>
+    require.config({
+      baseUrl: 'javascripts',
+      paths: {
+        backbone: 'vendor/backbone-min',
+        underscore: 'vendor/underscore-min',
+        jQuery: 'vendor/jquery-2.0.3.min',
+      },
+      shim: {
+        backbone: {
+          deps: ['underscore', 'jQuery'],
+          exports: 'Backbone'
+        },
+        underscore: {
+          exports: '_'
+        }
+      }
+    });
+  </script>
+  <script src="javascripts/app.js"></script>
+  <script>
+    require(['app'], function(app) {
+      app.start($('body'));
+    });
+  </script>
+</body>
+</html>
