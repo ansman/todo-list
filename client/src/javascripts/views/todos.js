@@ -1,4 +1,4 @@
-define('views/todos', ['lib/view', 'views/todo', 'text!templates/todos.html'], function(View, TodoView, template) {
+define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html"], function(View, TodoView, template) {
   "use strict";
 
   return View.extend({
@@ -6,15 +6,26 @@ define('views/todos', ['lib/view', 'views/todo', 'text!templates/todos.html'], f
     template: _.template(template),
 
     initialize: function() {
-      _.bindAll(this, 'getRenderedItemViewFor', 'renderItem');
+      _.bindAll(this,
+                "getRenderedItemViewFor",
+                "renderItem",
+                "updateItemCount",
+                "collectionUpdated");
+      this.collection.fetch();
+
+      // Cache the result from this function
       this.getRenderedItemViewFor = _.memoize(this.getRenderedItemViewFor);
+
+      this.listenTo(this.collection, "sync", this.collectionUpdated);
     },
 
     onRender: function() {
-      this.$itemsContainer = this.$('ul')
-        .empty();
-      this.collection.each(this.renderItem);
+      this.$itemsContainer = this.$("ul").empty();
+    },
+
+    collectionUpdated: function() {
       this.updateItemCount();
+      this.collection.each(this.renderItem);
     },
 
     renderItem: function(model) {
@@ -24,11 +35,12 @@ define('views/todos', ['lib/view', 'views/todo', 'text!templates/todos.html'], f
 
     getRenderedItemViewFor: function(model) {
       var view = new TodoView({model: model});
+      view.on("change:completed", this.updateItemCount);
       return view.render();
     },
 
     updateItemCount: function() {
-      this.$('.item-count .count').text(this.collection.todosLeft());
+      this.$(".item-count .count").text(this.collection.todosLeft());
     }
   });
 });
