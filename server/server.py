@@ -1,5 +1,5 @@
-from sudo import config, app, setup
+from sudo import config, app, setup_api
 
 if __name__ == '__main__':
-    setup.setup(app)
+    setup_api(app)
     app.run(debug=app.config['DEBUG'])
