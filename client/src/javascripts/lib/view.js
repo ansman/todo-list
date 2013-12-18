@@ -1,4 +1,4 @@
-define('lib/view', ['backbone'], function(Backbone) {
+define('lib/view', ['backbone', 'underscore'], function(Backbone, _) {
   "use strict";
 
   return Backbone.View.extend({
@@ -15,6 +15,22 @@ define('lib/view', ['backbone'], function(Backbone) {
       };
     },
 
-    onRender: function() {},
+    addSubview: function(view) {
+      this._subviews = this._subviews || {};
+      this._subviews[view.cid] = view;
+    },
+
+    close: function() {
+      this.onClose();
+      this._closeSubviews();
+      this.remove();
+    },
+
+    _closeSubviews: function() {
+      _.invoke(this._subviews, 'close');
+    },
+
+    onClose: function() {},
+    onRender: function() {}
   });
 });

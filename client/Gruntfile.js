@@ -16,6 +16,13 @@ module.exports = function(grunt) {
           laxcomma: true
         }
       },
+      specs: {
+        src: "specs/**/*.js",
+        options: {
+          ignores: ["specs/vendor/**/*.js"],
+          laxcomma: true
+        }
+      },
       src: {
         src: "src/javascripts/**/*.js",
         options: {
@@ -23,6 +30,35 @@ module.exports = function(grunt) {
           ignores: [
             "src/javascripts/text.js",
           ]
+        }
+      }
+    },
+    jasmine: {
+      specs: {
+        src: "src/javascripts/**/*.js",
+        options: {
+          keepRunner: true,
+          outfile: 'tests.html',
+          specs: "specs/**/*-spec.js",
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions: {
+            requireConfig: {
+              paths: {
+                jquery: "specs/vendor/jquery.min",
+                underscore: "specs/vendor/underscore-min",
+                backbone: "specs/vendor/backbone-min"
+              },
+              shim: {
+                underscore: {
+                  exports: "_"
+                },
+                backbone: {
+                  exports: "Backbone",
+                  deps: ["jquery", "underscore"]
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -40,6 +76,10 @@ module.exports = function(grunt) {
       }
     },
     watch: {
+      gruntfile: {
+        files: ["Gruntfile.js"],
+        tasks: ["jshint:gruntfile"]
+      },
       stylus: {
         options: { atBegin: true },
         files: ["src/stylus/*.styl"],
@@ -52,7 +92,12 @@ module.exports = function(grunt) {
       src: {
         options: { atBegin: true, },
         files: ["src/javascripts/**/*.js"],
-        tasks: ["requirejs:development", "jshint:src"]
+        tasks: ["requirejs:development", "jshint:src", "jasmine"]
+      },
+      specs: {
+        options: { atBegin: true, },
+        files: ["specs/**/*.js"],
+        tasks: ["jshint:specs", "jasmine"]
       }
     }
   });
@@ -60,6 +105,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks("grunt-contrib-jasmine");
   grunt.loadNpmTasks("grunt-contrib-stylus");
   grunt.loadNpmTasks("grunt-contrib-requirejs");
   grunt.loadNpmTasks("grunt-notify");

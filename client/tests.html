@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner</title>
+
+  
+  <link rel="stylesheet" type="text/css" href=".grunt/grunt-contrib-jasmine/jasmine.css">
+  
+
+  <script src=".grunt/grunt-contrib-jasmine/require.js"></script>
+  <script>
+    require.onError = function(error) {
+      var message = error.requireType + ': ';
+      if (error.requireType === 'scripterror' || error.requireType === 'notloaded' && error.requireModules) {
+        message += 'Illegal path or script error: ' + '[\'' + error.requireModules.join("', '") + '\']';
+      } else {
+        message += error.message;
+      }
+
+      throw Error(message);
+    };
+  </script>
+
+  
+  
+  <script src=".grunt/grunt-contrib-jasmine/jasmine.js"></script>
+  
+  <script src=".grunt/grunt-contrib-jasmine/jasmine-html.js"></script>
+  
+  
+
+  <script>
+    
+
+    
+      require.config({
+  "paths": {
+    "jquery": "specs/vendor/jquery.min",
+    "underscore": "specs/vendor/underscore-min",
+    "backbone": "specs/vendor/backbone-min"
+  },
+  "shim": {
+    "underscore": {
+      "exports": "_"
+    },
+    "backbone": {
+      "exports": "Backbone",
+      "deps": [
+        "jquery",
+        "underscore"
+      ]
+    }
+  }
+});
+    
+  </script>
+
+  <script>
+    function launchTest() {
+    require([
+      
+        
+        'src/javascripts/app' ,
+      
+        
+        'src/javascripts/collections/todos' ,
+      
+        
+        'src/javascripts/lib/collection' ,
+      
+        
+        'src/javascripts/lib/model' ,
+      
+        
+        'src/javascripts/lib/view' ,
+      
+        
+        'src/javascripts/models/todo' ,
+      
+        
+        'src/javascripts/text' ,
+      
+        
+        'src/javascripts/views/todo' ,
+      
+        
+        'src/javascripts/views/todos' 
+      
+    ],
+    function(){
+      require(['specs/lib/view-spec.js','.grunt/grunt-contrib-jasmine/reporter.js'], function(){
+        require(['.grunt/grunt-contrib-jasmine/jasmine-helper.js'], function(){
+          // good to go! Our tests should already be running.
+        })
+      })
+    }
+    )
+  }
+  </script>
+
+  
+  <script>
+  launchTest();
+  </script>
+  
+</head>
+<body>
+</body>
+</html>
