@@ -10,7 +10,10 @@ def setup_routes(app):
     def parse_json(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            data = json.loads(request.data)
+            try:
+                data = json.loads(request.data)
+            except ValueError:
+                abort(400, "Could not decode the request body")
             return f(*args, data=data, **kwargs)
         return wrapper
 

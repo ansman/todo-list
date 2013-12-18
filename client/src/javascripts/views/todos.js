@@ -1,9 +1,13 @@
-define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html"], function(View, TodoView, template) {
+define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html", "jquery"], function(View, TodoView, template, $) {
   "use strict";
 
   return View.extend({
     id: "todos",
     template: _.template(template),
+
+    events: {
+      "submit .new-todo": "createTodo"
+    },
 
     initialize: function() {
       _.bindAll(this,
@@ -24,6 +28,7 @@ define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html"], f
 
     onRender: function() {
       this.$itemsContainer = this.$("ul").empty();
+      this.$title = this.$(".new-todo input[name=title]");
     },
 
     collectionUpdated: function() {
@@ -38,12 +43,28 @@ define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html"], f
 
     getRenderedItemViewFor: function(model) {
       var view = new TodoView({model: model});
+      // The view will trigger this when the user toggles the checkbox
       view.on("change:completed", this.updateItemCount);
       return view.render();
     },
 
     updateItemCount: function() {
       this.$(".item-count .count").text(this.collection.todosLeft());
+    },
+
+    createTodo: function(ev) {
+      // Important or the page will reload!
+      ev.preventDefault();
+
+      var title = $.trim(this.$title.val());
+      if (!title) return;
+
+      var attributes = {title: title, completed: false};
+      this.collection.create(attributes, {
+        success: this.collectionUpdated
+      });
+
+      this.$title.val('');
     }
   });
 });
