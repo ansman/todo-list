@@ -91,7 +91,7 @@ module.exports = function(grunt) {
       },
       src: {
         options: { atBegin: true, },
-        files: ["src/javascripts/**/*.js"],
+        files: ["src/javascripts/**/*.js", "src/javascripts/templates/**/*.html"],
         tasks: ["requirejs:development", "jshint:src", "jasmine"]
       },
       specs: {
