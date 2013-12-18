@@ -33,7 +33,7 @@ define("views/todo", ["lib/view", "text!templates/todo.html", "underscore"], fun
     },
 
     completedChanged: function() {
-      this.model.set({completed: this.$completed.prop("checked")});
+      this.model.save({completed: this.$completed.prop("checked")});
       this.trigger("change:completed");
     }
   });
