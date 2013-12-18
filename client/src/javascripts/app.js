@@ -18,7 +18,8 @@ define("app", ["routers/todos", "collections/todos", "backbone"], function(Todos
 
     options = options || {};
 
-    if (method in ["create", "update"]) data = model.toJSON();
+    if (method === "create" || method === "update")
+      data = JSON.stringify(model.toJSON());
 
     return $.ajax({
       complete: options.complete,
