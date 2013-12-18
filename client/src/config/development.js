@@ -2,15 +2,15 @@ require.config({
   paths: {
     backbone: "empty:",
     underscore: "empty:",
-    jQuery: "empty:"
+    jquery: "empty:"
   },
   shim: {
     backbone: {
-      deps: ['underscore', 'jQuery'],
-      exports: 'Backbone'
+      deps: ["underscore", "jquery"],
+      exports: "Backbone"
     },
     underscore: {
-      exports: '_'
+      exports: "_"
     }
   }
 });
