@@ -7,7 +7,7 @@ define("views/todo", ["lib/view", "text!templates/todo.html", "underscore"], fun
     tagName: "li",
 
     events: {
-      "change input[name=completed]": "completedChanged"
+      "change input": "updateModel"
     },
 
     initialize: function() {
@@ -32,8 +32,11 @@ define("views/todo", ["lib/view", "text!templates/todo.html", "underscore"], fun
       this.$title.val(this.model.get("title"));
     },
 
-    completedChanged: function() {
-      this.model.save({completed: this.$completed.prop("checked")});
+    updateModel: function() {
+      this.model.save({
+        completed: this.$completed.prop("checked"),
+        title: this.$title.val()
+      });
       this.trigger("change:completed");
     }
   });
