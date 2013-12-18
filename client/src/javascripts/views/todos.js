@@ -14,7 +14,10 @@ define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html"], f
       this.collection.fetch();
 
       // Cache the result from this function
-      this.getRenderedItemViewFor = _.memoize(this.getRenderedItemViewFor);
+      this.getRenderedItemViewFor = _.memoize(this.getRenderedItemViewFor,
+                                              function(model) {
+                                                return model.cid;
+                                              });
 
       this.listenTo(this.collection, "sync", this.collectionUpdated);
     },
