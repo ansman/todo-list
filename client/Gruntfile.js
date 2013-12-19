@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         options: {
           laxcomma: true,
           ignores: [
-            "src/javascripts/text.js",
+            "src/javascripts/text.js"
           ]
         }
       }

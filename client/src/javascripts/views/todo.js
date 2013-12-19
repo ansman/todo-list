@@ -10,10 +10,24 @@ define("views/todo", ["lib/view", "text!templates/todo.html", "underscore"], fun
       "change input": "updateModel"
     },
 
+    attributes: {
+      draggable: "true"
+    },
+
     initialize: function() {
-      _.bindAll(this, "updateCompleted", "updateTitle");
+      _.bindAll(this, "updateCompleted", "updateTitle", "setElementID");
       this.listenTo(this.model, "change:completed", this.updateCompleted);
       this.listenTo(this.model, "change:title", this.updateTitle);
+
+      // New models will not have an ID until the are persisted
+      if (this.model.id)
+        this.setElementID();
+      else
+        this.listenToOnce(this.model, "change:id", this.setElementID);
+    },
+
+    setElementID: function() {
+      this.$el.data({todoID: this.model.id});
     },
 
     onRender: function() {

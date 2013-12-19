@@ -1,4 +1,6 @@
-define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templates/todos.html"], function(View, TodoView, NewTodoView, template) {
+define("views/todos",
+       ["lib/view", "views/todo", "views/new-todo", "text!templates/todos.html", "lib/dragger"],
+       function(View, TodoView, NewTodoView, template, Dragger) {
   "use strict";
 
   return View.extend({
@@ -15,8 +17,8 @@ define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templat
                 "getRenderedItemViewFor",
                 "renderItem",
                 "updateItemCount",
-                "collectionUpdated");
-      this.collection.fetch();
+                "collectionUpdated",
+                "saveOrder");
 
       // Cache the result from this function
       this.getRenderedItemViewFor = _.memoize(this.getRenderedItemViewFor,
@@ -24,7 +26,8 @@ define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templat
                                                 return model.cid;
                                               });
 
-      this.listenTo(this.collection, "sync", this.collectionUpdated);
+      this.listenTo(this.collection, "add remove", this.collectionUpdated);
+      this.collection.fetch();
 
       this.newTodoView = new NewTodoView({collection: this.collection});
       this.addSubview(this.newTodoView);
@@ -33,6 +36,16 @@ define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templat
     onRender: function() {
       this.$itemsContainer = this.$("ul").empty();
       this.renderNewTodoView();
+
+      this.dragger = new Dragger({
+        $root: this.$itemsContainer,
+        handleSelector: ".dragger",
+        itemSelector: ".todo"
+      });
+
+      this.dragger
+        .setup()
+        .on("item-dropped", this.saveOrder);
     },
 
     renderNewTodoView: function() {
@@ -63,6 +76,22 @@ define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templat
 
     markAllAsComplete: function() {
       this.collection.markAllAsComplete();
+      this.updateItemCount();
+    },
+
+    saveOrder: function($item) {
+      var model = this.collection.get($item.data("todoID"))
+        , that = this;
+      if (!model) return;
+
+      // The new order should be the order of the element the item was dropped on
+      var newOrder = this.collection.at($item.index()).get("order");
+
+      if (newOrder === model.get("order")) return;
+
+      model.save({order: newOrder}, {
+        success: function() { that.collection.fetch(); }
+      });
     }
   });
 });

@@ -96,3 +96,37 @@
     border 0
     width 100%
     outline none
+
+  .dragger
+    position absolute
+    top 1px
+    right 11px
+    cursor move
+    padding 24px 20px
+    visibility hidden
+
+    .bar
+      top 50%
+      left 20px
+      margin-top -1px
+
+      &, &:after, &:before
+        position absolute
+        width 10px
+        height 2px
+        background-color #bfbbbb
+        box-shadow -1px 1px #fcfdfe
+
+      &:after, &:before
+        display block
+        left 0
+        content ''
+
+      &:before
+        top -4px
+
+      &:after
+        top 4px
+
+  &:hover .dragger
+    visibility visible
