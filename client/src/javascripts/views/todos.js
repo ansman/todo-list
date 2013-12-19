@@ -18,6 +18,7 @@ define("views/todos",
                 "renderItem",
                 "updateItemCount",
                 "collectionUpdated",
+                "handleCollectionError",
                 "saveOrder");
 
       // Cache the result from this function
@@ -27,6 +28,7 @@ define("views/todos",
                                               });
 
       this.listenTo(this.collection, "add remove", this.collectionUpdated);
+      this.listenTo(this.collection, "error", this.handleCollectionError);
       this.collection.fetch();
 
       this.newTodoView = new NewTodoView({collection: this.collection});
@@ -55,6 +57,12 @@ define("views/todos",
     collectionUpdated: function() {
       this.updateItemCount();
       this.collection.each(this.renderItem);
+    },
+
+    handleCollectionError: function(model, resp) {
+      // TODO: Improve error handling
+      alert("Something went wrong :(");
+      if (window.console && console.error) console.error(resp);
     },
 
     renderItem: function(model) {
