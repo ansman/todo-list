@@ -17,7 +17,7 @@ define("app", ["routers/todos", "collections/todos", "backbone", "jquery", "unde
         $container: $container,
         collection: this.collections.todos
       });
-      Backbone.history.start();
+      Backbone.history.start({pushState: true});
     }
   };
 });
