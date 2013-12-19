@@ -43,6 +43,7 @@ define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html", "j
 
     getRenderedItemViewFor: function(model) {
       var view = new TodoView({model: model});
+      this.addSubview(view);
       // The view will trigger this when the user toggles the checkbox
       view.on("change:completed", this.updateItemCount);
       return view.render();
