@@ -1,9 +1,9 @@
-define("app", ["routers/todos", "collections/todos", "backbone", "jquery", "underscore"], function(TodosRouter, TodosCollection, Backbone, $, _) {
+define("app", ["routers/todos", "collections/todos", "backbone", "jquery", "underscore", "config"], function(TodosRouter, TodosCollection, Backbone, $, _, config) {
   "use strict";
 
   Backbone.ajax = function(options) {
     return $.ajax(_.extend({}, options, {
-      url: "http://localhost:4000" + options.url
+      url: config.apiURL + options.url
     }));
   };
 

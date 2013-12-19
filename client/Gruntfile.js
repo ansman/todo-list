@@ -73,8 +73,27 @@ module.exports = function(grunt) {
           baseUrl: 'src/javascripts',
           out: 'public/javascripts/app.js',
           name: 'app',
-          mainConfigFile: './src/config/development.js',
-          stubModules: ["text"]
+          mainConfigFile: './src/config/require.js',
+          stubModules: ["text"],
+          paths: {
+            config: '../config/development'
+          }
+        }
+      },
+      production: {
+        options: {
+          useStrict: true,
+          optimize: 'uglify2',
+          preserveLicenseComments: false,
+          generateSourceMaps: true,
+          baseUrl: 'src/javascripts',
+          out: 'public/javascripts/app.js',
+          name: 'app',
+          mainConfigFile: './src/config/require.js',
+          stubModules: ["text"],
+          paths: {
+            config: '../config/production'
+          }
         }
       }
     },
@@ -118,5 +137,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-notify");
 
   grunt.registerTask("default", "watch");
-  grunt.registerTask("heroku:production", ["stylus"]);
+  grunt.registerTask("heroku:production", ["stylus", "requirejs:production"]);
 };
