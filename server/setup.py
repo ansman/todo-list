@@ -8,15 +8,15 @@ def glob_files(path):
     return [f for f in glob(path) if os.path.isfile(f)]
 
 setup(
-    name='sudo',
-    version='0.0.1',
+    name="sudo",
+    version="0.0.1",
     packages=[
-        'sudo',
-        'sudo.models',
+        "sudo",
+        "sudo.models",
     ],
     data_files=[
-        ('config', glob_files('config/*'))
+        ("config", glob_files("config/*"))
     ],
     zip_safe=False,
-    test_suite='nose.collector',
+    test_suite="nose.collector",
 )

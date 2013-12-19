@@ -20,7 +20,7 @@ define("views/new-todo", ["lib/view", "text!templates/new-todo.html", "jquery"],
       if (!title) return;
 
       this.collection.create({title: title, completed: false});
-      this.$title.val('');
+      this.$title.val("");
     }
   });
 });

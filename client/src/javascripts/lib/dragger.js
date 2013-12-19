@@ -4,7 +4,7 @@ define("lib/dragger", ["backbone", "underscore"], function(Backbone, _) {
     this.handleSelector = options.handleSelector;
     this.itemSelector = options.itemSelector;
 
-    _.bindAll(this, 'startDragging', 'stopDragging', 'dragOver');
+    _.bindAll(this, "startDragging", "stopDragging", "dragOver");
   };
 
   _.extend(Dragger.prototype, Backbone.Events, {
@@ -34,8 +34,8 @@ define("lib/dragger", ["backbone", "underscore"], function(Backbone, _) {
         , that = this
         , dt = ev.originalEvent.dataTransfer;
 
-      dt.effectAllowed = 'move';
-      dt.setData('Text', 'dummy');
+      dt.effectAllowed = "move";
+      dt.setData("Text", "dummy");
       this.handle = false;
 
       // This cannot be done directly since the browser will copy the look of
