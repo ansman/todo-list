@@ -6,7 +6,8 @@ define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templat
     template: _.template(template),
 
     events: {
-      "submit .new-todo": "createTodo"
+      "submit .new-todo": "createTodo",
+      "click .mark-all": "markAllAsComplete"
     },
 
     initialize: function() {
@@ -59,5 +60,9 @@ define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templat
     updateItemCount: function() {
       this.$(".item-count .count").text(this.collection.todosLeft());
     },
+
+    markAllAsComplete: function() {
+      this.collection.markAllAsComplete();
+    }
   });
 });
