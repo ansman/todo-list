@@ -5,7 +5,10 @@ module.exports = function(grunt) {
     stylus: {
       compile: {
         files: {
-          "public/stylesheets/app.css": ["src/stylus/app.styl"]
+          "public/stylesheets/app.css": [
+            "src/stylus/app.styl",
+            "src/stylus/views/*.styl"
+          ]
         }
       }
     },
@@ -82,7 +85,7 @@ module.exports = function(grunt) {
       },
       stylus: {
         options: { atBegin: true },
-        files: ["src/stylus/*.styl"],
+        files: ["src/stylus/**/*.styl"],
         tasks: ["stylus:compile"]
       },
       livereload: {
