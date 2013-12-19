@@ -89,7 +89,11 @@ module.exports = function(grunt) {
         tasks: ["stylus:compile"]
       },
       livereload: {
-        files: ["public/**/*.css", "public/**/*.js", "public/**/*.html"],
+        files: ["public/**/*.js", "public/**/*.html"],
+        options: { livereload: true },
+      },
+      livereloadCSS: {
+        files: ["public/**/*.css"],
         options: { livereload: true },
       },
       src: {
