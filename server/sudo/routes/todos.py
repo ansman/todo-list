@@ -35,8 +35,7 @@ def setup_routes(app):
     @parse_json
     @with_db
     def create_todo(data, db):
-        todo_id = todos.create_todo(db, data)
-        todo = todos.get_todo(db, todo_id)
+        todo = todos.create_todo(db, data)
         todo = convert(todo)
         return json.dumps(todo), 201
 
@@ -53,8 +52,7 @@ def setup_routes(app):
     @parse_json
     @with_db
     def update_todo(todo_id, data, db):
-        todos.update_todo(db, todo_id, data)
-        todo = todos.get_todo(db, todo_id)
+        todo = todos.update_todo(db, todo_id, data)
         if not todo:
             abort(404)
         todo = convert(todo)

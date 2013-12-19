@@ -1,79 +1,144 @@
 from psycopg2.extras import DictCursor
+from functools import wraps
 
 from sudo import date_provider
 
-def get_all_todos(db):
-    cursor = db.cursor(cursor_factory=DictCursor)
-    cursor.execute('''
+def with_cursor(f):
+    @wraps(f)
+    def wrapper(db, *args, **kwargs):
+        cursor = db.cursor(cursor_factory=DictCursor)
+        try:
+            ret = f(cursor, *args, **kwargs)
+            db.commit()
+            return ret
+        except:
+            db.rollback()
+            raise
+        finally:
+            cursor.close()
+    return wrapper
+
+@with_cursor
+def get_all_todos(cursor):
+    cursor.execute("""
         SELECT
             "id",
             "completed",
+            "order",
             "title",
             "create_time",
             "update_time"
         FROM todos
-        ORDER BY id
-    ''')
+        ORDER BY "order"
+    """)
     todos = cursor.fetchall()
-    cursor.close()
     return map(convert_todo, todos)
 
-def create_todo(db, data):
+@with_cursor
+def create_todo(cursor, data):
     now = date_provider.now()
-    cursor = db.cursor()
-    cursor.execute('''
-        INSERT INTO todos
-        ("completed", "title", "create_time", "update_time")
-        VALUES (%s, %s, %s, %s)
-        RETURNING id
-    ''', (bool(data.get('completed')), data['title'], now, now))
-    return cursor.fetchone()[0]
+    cursor.execute('SELECT MAX("order") AS max_order FROM todos');
+    row = cursor.fetchone()
+    max_order = row["max_order"] or 0
 
-def get_todo(db, todo_id):
-    cursor = db.cursor(cursor_factory=DictCursor)
-    cursor.execute('''
+    cursor.execute("""
+        INSERT INTO todos
+        ("completed", "title", "create_time", "update_time", "order")
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING
+            "id",
+            "completed",
+            "order",
+            "title",
+            "create_time",
+            "update_time"
+    """, (bool(data.get("completed")), data["title"], now, now, max_order+1))
+    todo = cursor.fetchone()
+    return convert_todo(todo)
+
+@with_cursor
+def get_todo(cursor, todo_id):
+    cursor.execute("""
         SELECT
             "id",
             "completed",
+            "order",
             "title",
             "create_time",
             "update_time"
         FROM todos
         WHERE id = %s
-    ''', (todo_id, ))
+    """, (todo_id, ))
     todo = cursor.fetchone()
-    cursor.close()
     return convert_todo(todo)
 
-def update_todo(db, todo_id, data):
+@with_cursor
+def update_todo(cursor, todo_id, data):
     now = date_provider.now()
-    cursor = db.cursor()
-    cursor.execute('''
+
+    cursor.execute('SELECT "order" FROM todos WHERE "id" = %s', (todo_id,))
+    old_todo = cursor.fetchone()
+    if not old_todo:
+        return None
+
+    old_order = old_todo["order"]
+    new_order = int(data.get("order", old_order))
+
+    _shift_todos(cursor, old_order, new_order)
+    cursor.execute("""
         UPDATE todos
         SET
             "completed" = %s,
             "title" = %s,
-            "update_time" = %s
-        WHERE id = %s
-    ''', (bool(data.get('completed')), data['title'], now, todo_id))
+            "update_time" = %s,
+            "order" = %s
+        WHERE "id" = %s
+        RETURNING
+            "id",
+            "completed",
+            "order",
+            "title",
+            "create_time",
+            "update_time"
+    """, (bool(data.get("completed")), data["title"], now, new_order, todo_id))
+    todo = cursor.fetchone()
+    return convert_todo(todo)
 
-def set_completed_status(db, completed):
-    cursor = db.cursor()
-    cursor.execute('''
+def _shift_todos(cursor, old_order, new_order):
+    diff = old_order - new_order
+    if diff != 0:
+        cursor.execute("""
+            UPDATE todos
+            SET
+                "order" = "order" + %s
+            WHERE
+                "order" >= %s AND
+                "order" <= %s
+        """, (
+            diff/abs(diff),
+            min(new_order, old_order),
+            max(new_order, old_order)
+        ))
+
+
+@with_cursor
+def set_completed_status(cursor, completed):
+    cursor.execute("""
         UPDATE todos
         SET
             "completed" = %s,
             "update_time" = %s
         WHERE "completed" != %s
-    ''', (completed, date_provider.now(), completed))
+    """, (completed, date_provider.now(), completed))
 
 def convert_todo(todo):
     if not todo:
         return todo
     return {
-        "id": todo['id'],
-        "completed": todo['completed'],
-        "title": todo['title'],
-        "create_time": todo['create_time'],
-        "update_time": todo['update_time']
+        "id": todo["id"],
+        "completed": todo["completed"],
+        "order": todo["order"],
+        "title": todo["title"],
+        "create_time": todo["create_time"],
+        "update_time": todo["update_time"]
     }

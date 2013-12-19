@@ -15,7 +15,6 @@ def _connect_db(app):
     connection = psycopg2.connect(database=app.config['DATABASE_NAME'],
                                   user=app.config['DATABASE_USER'],
                                   password=app.config['DATABASE_PASSWORD'])
-    connection.autocommit = True
     return connection
 
 def close_db(error):
