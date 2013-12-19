@@ -1,7 +1,12 @@
-# -*- coding: utf-8 -*-
+import os
+from urlparse import urlparse
 
 def load_config(app):
-    app.config.update(DATABASE_NAME="sudo",
-                      DATABASE_USER="sudo",
-                      DATABASE_PASSWORD="p4ssw0rd",
-                      DEBUG=True)
+    uri = os.environ.get("DATABASE", "postgresql://sudo:p4ssw0rd@localhost:5432/sudo")
+    uri = urlparse(uri)
+
+    app.config.update(DATABASE_HOST=uri.hostname,
+                      DATABASE_PORT=uri.port,
+                      DATABASE_USER=uri.username,
+                      DATABASE_PASSWORD=uri.password,
+                      DATABASE_NAME=uri.path[1:])

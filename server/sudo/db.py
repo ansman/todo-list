@@ -12,7 +12,9 @@ def get_db(app):
     return g.db_connection
 
 def _connect_db(app):
-    connection = psycopg2.connect(database=app.config["DATABASE_NAME"],
+    connection = psycopg2.connect(host=app.config["DATABASE_HOST"],
+                                  port=app.config["DATABASE_PORT"],
+                                  database=app.config["DATABASE_NAME"],
                                   user=app.config["DATABASE_USER"],
                                   password=app.config["DATABASE_PASSWORD"])
     return connection
