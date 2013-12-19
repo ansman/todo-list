@@ -33,9 +33,16 @@ define("views/todo", ["lib/view", "text!templates/todo.html", "underscore"], fun
     },
 
     updateModel: function() {
+      var title = this.$title.val();
+
+      if (!title) {
+        this.updateTitle();
+        return;
+      }
+
       this.model.save({
         completed: this.$completed.prop("checked"),
-        title: this.$title.val()
+        title: title
       });
       this.trigger("change:completed");
     }
