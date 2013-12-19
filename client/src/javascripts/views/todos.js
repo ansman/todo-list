@@ -1,4 +1,4 @@
-define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html", "jquery"], function(View, TodoView, template, $) {
+define("views/todos", ["lib/view", "views/todo", "views/new-todo", "text!templates/todos.html"], function(View, TodoView, NewTodoView, template) {
   "use strict";
 
   return View.extend({
@@ -24,11 +24,18 @@ define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html", "j
                                               });
 
       this.listenTo(this.collection, "sync", this.collectionUpdated);
+
+      this.newTodoView = new NewTodoView({collection: this.collection});
+      this.addSubview(this.newTodoView);
     },
 
     onRender: function() {
       this.$itemsContainer = this.$("ul").empty();
-      this.$title = this.$(".new-todo input[name=title]");
+      this.renderNewTodoView();
+    },
+
+    renderNewTodoView: function() {
+      this.$(".new-todo").replaceWith(this.newTodoView.render().el);
     },
 
     collectionUpdated: function() {
@@ -52,20 +59,5 @@ define("views/todos", ["lib/view", "views/todo", "text!templates/todos.html", "j
     updateItemCount: function() {
       this.$(".item-count .count").text(this.collection.todosLeft());
     },
-
-    createTodo: function(ev) {
-      // Important or the page will reload!
-      ev.preventDefault();
-
-      var title = $.trim(this.$title.val());
-      if (!title) return;
-
-      var attributes = {title: title, completed: false};
-      this.collection.create(attributes, {
-        success: this.collectionUpdated
-      });
-
-      this.$title.val('');
-    }
   });
 });
