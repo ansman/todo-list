@@ -33,6 +33,16 @@
       margin-left 10px
 
     .mark-all
+      outline none
+      text-color = #448ccb
+      cursor pointer
+      background transparent
+      border none
       display inline-block
       float right
+      height 100%
       padding 0 10px
+      color text-color
+
+      &:hover
+        color darken(text-color, 20%)
