@@ -1,36 +1,10 @@
-define("app", ["routers/todos", "collections/todos", "backbone"], function(TodosRouter, TodosCollection, Backbone) {
+define("app", ["routers/todos", "collections/todos", "backbone", "jquery", "underscore"], function(TodosRouter, TodosCollection, Backbone, $, _) {
   "use strict";
-  var methodMap = {
-    "create": "POST",
-    "read": "GET",
-    "update": "PUT",
-    "delete": "DELETE"
-  };
 
-  function buildURL(endpoint) {
-      return "http://localhost:4000" + endpoint;
-  }
-
-  Backbone.sync = function(method, model, options) {
-    var verb = methodMap[method]
-      , endpoint = _.result(model, "url")
-      , data = null;
-
-    options = options || {};
-
-    if (method === "create" || method === "update")
-      data = JSON.stringify(model.toJSON());
-
-    return $.ajax({
-      complete: options.complete,
-      contentType: "application/json",
-      data: data,
-      dataType: "json",
-      error: options.error,
-      success: options.success,
-      type: verb,
-      url: buildURL(endpoint)
-    });
+  Backbone.ajax = function(options) {
+    return $.ajax(_.extend({}, options, {
+      url: "http://localhost:4000" + options.url
+    }));
   };
 
   return {
