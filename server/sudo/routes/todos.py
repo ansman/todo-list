@@ -62,7 +62,7 @@ def setup_routes(app):
     @parse_json
     @with_db
     def update_all_todos(db, data):
-        todos.set_completed_status(get_db(app), bool(data.get("completed")))
+        todos.set_completed_status(db, bool(data.get("completed")))
         ts = todos.get_all_todos(db)
         ts = map(convert, ts)
         return json.dumps(ts)
