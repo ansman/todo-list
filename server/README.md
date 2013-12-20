@@ -21,3 +21,9 @@ Running locally
 $ pip install -r requirements.txt
 $ python server.py
 ```
+
+Running tests
+---
+```shell
+$ nosetests
+```
