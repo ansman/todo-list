@@ -75,6 +75,7 @@ module.exports = function(grunt) {
           name: 'app',
           mainConfigFile: './src/config/require.js',
           stubModules: ["text"],
+          insertRequire: ["http://localhost:35729/livereload.js"],
           paths: {
             config: '../config/development'
           }
